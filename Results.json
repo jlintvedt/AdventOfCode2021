@@ -6,7 +6,7 @@
       "Puzzle1_TestTime": "<1ms",
       "Puzzle2_TestTime": "<1ms",
       "Puzzle1_BenchmarkTime": "59μs",
-      "Puzzle2_BenchmarkTime": "58μs"
+      "Puzzle2_BenchmarkTime": "57μs"
     },
     {
       "Day": "02",

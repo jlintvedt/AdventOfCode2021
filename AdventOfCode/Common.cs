@@ -15,7 +15,15 @@ namespace AdventOfCode.Common
                 // No delim, split on each character
                 return input.ToCharArray().Select(i => (int)Char.GetNumericValue(i)).ToArray();
             }
-            return input.Split(new[] { delim }, StringSplitOptions.None).Select(i => Convert.ToInt32(i)).ToArray();
+
+            var rawInts = input.Split(delim);
+            var ints = new int[rawInts.Length];
+            for (int i = 0; i < rawInts.Length; i++)
+            {
+                ints[i] = int.Parse(rawInts[i]);
+            }
+
+            return ints;
         }
 
         public static long[] ParseStringToLongArray(string input, string delim)

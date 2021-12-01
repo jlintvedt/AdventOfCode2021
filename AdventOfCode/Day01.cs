@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 
 namespace AdventOfCode
 {
@@ -8,18 +7,13 @@ namespace AdventOfCode
     /// </summary>
     public class Day01
     {
-        public class SubmarineSonar
+        public class SonarSweep
         {
-            private List<int> Depths;
+            private readonly int[] Depths;
 
-            public SubmarineSonar(string[] depths)
+            public SonarSweep(string rawDepths)
             {
-                Depths = new List<int>();
-
-                foreach (var depth in depths)
-                {
-                    Depths.Add(int.Parse(depth));
-                }
+                Depths = Common.Common.ParseStringToIntArray(rawDepths, delim:Environment.NewLine);
             }
 
             public int CountIncrements()
@@ -30,9 +24,7 @@ namespace AdventOfCode
                 foreach (var depth in Depths)
                 {
                     if (depth > prev)
-                    {
                         numInc++;
-                    }
 
                     prev = depth;
                 }
@@ -45,13 +37,12 @@ namespace AdventOfCode
                 var numInc = 0;
                 var prevSum = int.MaxValue;
 
-                for (int i = 0; i < Depths.Count-2; i++)
+                for (int i = 0; i < Depths.Length-2; i++)
                 {
                     var nextSum = Depths[i] + Depths[i + 1] + Depths[i + 2];
+                    
                     if (nextSum > prevSum)
-                    {
                         numInc++;
-                    }
 
                     prevSum = nextSum;
                 }
@@ -63,9 +54,7 @@ namespace AdventOfCode
         // == == == == == Puzzle 1 == == == == ==
         public static string Puzzle1(string input)
         {
-            var depths = input.Split(Environment.NewLine);
-
-            var ss = new SubmarineSonar(depths);
+            var ss = new SonarSweep(input);
 
             return ss.CountIncrements().ToString();
         }
@@ -73,9 +62,7 @@ namespace AdventOfCode
         // == == == == == Puzzle 2 == == == == ==
         public static string Puzzle2(string input)
         {
-            var depths = input.Split(Environment.NewLine);
-
-            var ss = new SubmarineSonar(depths);
+            var ss = new SonarSweep(input);
 
             return ss.CountSlidingWindowIncrements().ToString();
         }
