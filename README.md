@@ -7,11 +7,11 @@ Run without debugger: `ctrl+f5` in VS Code. This stores the benchmark in [result
 
 ## Runtimes
 <!--ResultTableStart-->
-|                                |         | Test @3.8GHz<sup>1</sup> | Benchmark<sup>2</sup> |
+|                                |         | Test @2.6GHz<sup>1</sup> | Benchmark<sup>2</sup> |
 |--------------------------------|---------|-------------------------:|----------------------:|
-| [Day01](AdventOfCode/Day01.cs) | Puzzle1 |                      1ms |                   0ns |
-|                                | Puzzle2 |                          |                   0ns |
+| [Day01](AdventOfCode/Day01.cs) | Puzzle1 |                     <1ms |                  59μs |
+|                                | Puzzle2 |                     <1ms |                  58μs |
 <!--ResultTableEnd-->
 
-1) Desktop AMD Ryzen 9 3900X @3.8/4.6GHz. Visual Studio Test Explorer
-2) Desktop AMD Ryzen 9 3900X @3.8/4.6GHz. Using [DotNetBenchmark](https://github.com/dotnet/BenchmarkDotNet).
+1) Laptop Intel i9-11950H @ 2.6GHz. Visual Studio Test Explorer
+2) Laptop Intel i9-11950H @ 2.6GHz. Using [DotNetBenchmark](https://github.com/dotnet/BenchmarkDotNet).

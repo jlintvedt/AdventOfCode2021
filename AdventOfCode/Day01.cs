@@ -1,12 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Net;
 
 namespace AdventOfCode
 {
     /// <summary>
-    /// https://adventofcode.com/2021/day/01
+    /// https://adventofcode.com/2021/day/1
     /// </summary>
     public class Day01
     {
@@ -27,14 +25,15 @@ namespace AdventOfCode
             public int CountIncrements()
             {
                 var numInc = 0;
-                var prev = Depths.First();
+                var prev = int.MaxValue;
 
-                foreach (var depth in Depths.Skip(1))
+                foreach (var depth in Depths)
                 {
                     if (depth > prev)
                     {
                         numInc++;
                     }
+
                     prev = depth;
                 }
 
@@ -44,9 +43,9 @@ namespace AdventOfCode
             public int CountSlidingWindowIncrements()
             {
                 var numInc = 0;
-                var prevSum = Depths[0] + Depths[1] + Depths[2];
+                var prevSum = int.MaxValue;
 
-                for (int i = 1; i < Depths.Count-2; i++)
+                for (int i = 0; i < Depths.Count-2; i++)
                 {
                     var nextSum = Depths[i] + Depths[i + 1] + Depths[i + 2];
                     if (nextSum > prevSum)
