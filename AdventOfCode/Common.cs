@@ -97,6 +97,20 @@ namespace AdventOfCode.Common
             return bitArray;
         }
 
+        public static List<(TEnum, int)> ParseStringToListOfEnumIntTuples<TEnum>(string input, string lineDelim) where TEnum : struct
+        {
+            var Commands = new List<(TEnum direction, int value)>();
+
+            foreach (var com in input.Split(lineDelim))
+            {
+                var parts = com.Split(' ');
+                Enum.TryParse<TEnum>(parts[0], out TEnum direction);
+                Commands.Add((direction, int.Parse(parts[1])));
+            }
+
+            return Commands;
+        }
+
         // == == == == == Conversion == == == == ==
         public static int[] IntToTokenizedArray(int i)
         {

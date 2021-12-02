@@ -11,73 +11,71 @@ namespace AdventOfCode
     {
         public class SubmarineDive
         {
-            private int distance = 0;
+            private int horizontal = 0;
             private int depth = 0;
             private int aim = 0;
-            private List<string> moves;
+            private List<(Direction direction, int value)> Commands;
 
             public SubmarineDive(string input)
             {
-                moves = input.Split(Environment.NewLine).ToList();
+                Commands = Common.Common.ParseStringToListOfEnumIntTuples<Direction>(input, Environment.NewLine);
             }
 
             public int ExecuteMoves(bool manualMode = false)
             {
-                foreach (var move in moves)
+                foreach (var command in Commands)
                 {
                     if (!manualMode)
-                    {
-                        ApplyMoveCommand(move);
-                    }
+                        ApplyMoveCommand(command);
                     else
-                    {
-                        ApplyMoveCommandManually(move);
-                    }
+                        ApplyMoveCommandManually(command);
                 }
 
-                return distance * depth;
+                return horizontal * depth;
             }
 
-            private void ApplyMoveCommand(string command)
+            private void ApplyMoveCommand((Direction dir, int val) command)
             {
-                var parts = command.Split(' ');
-
-                switch (parts[0])
+                switch (command.dir)
                 {
-                    case "forward":
-                        distance += int.Parse(parts[1]);
+                    case Direction.forward:
+                        horizontal += command.val;
                         break;
-                    case "down":
-                        depth += int.Parse(parts[1]);
+                    case Direction.down:
+                        depth += command.val;
                         break;
-                    case "up":
-                        depth -= int.Parse(parts[1]);
+                    case Direction.up:
+                        depth -= command.val;
                         break;
                     default:
-                        throw new ArgumentException($"Unknown move {command}");
+                        break;
                 }
             }
 
-            private void ApplyMoveCommandManually(string command)
+            private void ApplyMoveCommandManually((Direction dir, int val) command)
             {
-                var parts = command.Split(' ');
-
-                switch (parts[0])
+                switch (command.dir)
                 {
-                    case "forward":
-                        var val = int.Parse(parts[1]);
-                        distance += val;
-                        depth += aim * val;
+                    case Direction.forward:
+                        horizontal += command.val;
+                        depth += command.val * aim;
                         break;
-                    case "down":
-                        aim += int.Parse(parts[1]);
+                    case Direction.down:
+                        aim += command.val;
                         break;
-                    case "up":
-                        aim -= int.Parse(parts[1]);
+                    case Direction.up:
+                        aim -= command.val;
                         break;
                     default:
-                        throw new ArgumentException($"Unknown move {command}");
+                        break;
                 }
+            }
+
+            private enum Direction
+            {
+                forward,
+                down,
+                up
             }
         }
 
