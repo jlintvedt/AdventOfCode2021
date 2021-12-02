@@ -5,7 +5,7 @@ using System.Linq;
 namespace AdventOfCode
 {
     /// <summary>
-    /// https://adventofcode.com/2021/day/02
+    /// https://adventofcode.com/2021/day/2
     /// </summary>
     public class Day02
     {
@@ -13,6 +13,7 @@ namespace AdventOfCode
         {
             private int distance = 0;
             private int depth = 0;
+            private int aim = 0;
             private List<string> moves;
 
             public SubmarineDive(string input)
@@ -20,11 +21,18 @@ namespace AdventOfCode
                 moves = input.Split(Environment.NewLine).ToList();
             }
 
-            public int ExecuteMoves()
+            public int ExecuteMoves(bool manualMode = false)
             {
                 foreach (var move in moves)
                 {
-                    ApplyMoveCommand(move);
+                    if (!manualMode)
+                    {
+                        ApplyMoveCommand(move);
+                    }
+                    else
+                    {
+                        ApplyMoveCommandManually(move);
+                    }
                 }
 
                 return distance * depth;
@@ -49,7 +57,29 @@ namespace AdventOfCode
                         throw new ArgumentException($"Unknown move {command}");
                 }
             }
-        } 
+
+            private void ApplyMoveCommandManually(string command)
+            {
+                var parts = command.Split(' ');
+
+                switch (parts[0])
+                {
+                    case "forward":
+                        var val = int.Parse(parts[1]);
+                        distance += val;
+                        depth += aim * val;
+                        break;
+                    case "down":
+                        aim += int.Parse(parts[1]);
+                        break;
+                    case "up":
+                        aim -= int.Parse(parts[1]);
+                        break;
+                    default:
+                        throw new ArgumentException($"Unknown move {command}");
+                }
+            }
+        }
 
         // == == == == == Puzzle 1 == == == == ==
         public static string Puzzle1(string input)
@@ -64,7 +94,7 @@ namespace AdventOfCode
         {
             var sd = new SubmarineDive(input);
 
-            return "Puzzle2";
+            return sd.ExecuteMoves(manualMode: true).ToString();
         }
     }
 }
