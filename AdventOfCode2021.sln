@@ -11,6 +11,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AdventOfCodeBenchmark", "Ad
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{80BB0B87-5A02-4AF9-BBEB-83910C6463ED}"
 	ProjectSection(SolutionItems) = preProject
+		README.md = README.md
 		Results.json = Results.json
 	EndProjectSection
 EndProject
