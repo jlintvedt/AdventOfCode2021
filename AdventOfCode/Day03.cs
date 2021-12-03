@@ -5,15 +5,15 @@ using System.Linq;
 namespace AdventOfCode
 {
     /// <summary>
-    /// https://adventofcode.com/2021/day/03
+    /// https://adventofcode.com/2021/day/3
     /// </summary>
     public class Day03
     {
         public class BinaryDiagnostics
         {
-            private int[,] DiagnosticReport;
-            private int NumLines;
-            private int NumBits;
+            private readonly int[,] DiagnosticReport;
+            private readonly int NumLines;
+            private readonly int NumBits;
 
             public BinaryDiagnostics(string input)
             {
@@ -53,44 +53,8 @@ namespace AdventOfCode
 
             public int CalculateLifeSupportRating()
             {
-                var mostCommon = CalculateMostCommonValues();
-
-                var canOxygen = new HashSet<int>(NumLines);
-                for (int i = 0; i < NumLines; i++)
-                {
-                    canOxygen.Add(i);
-                }
-                var canCo2 = new HashSet<int>(canOxygen);
-
-                // Calculate ratings
-                var oxygenRating = 0;
-                var co2Rating = 0;
-
-                for (int j = 0; j < NumBits; j++)
-                {
-                    var oxygenCriteria = CalculateMostCommonValueForCandidatesAtPos(canOxygen, j);
-                    var co2Criteria = 1 - CalculateMostCommonValueForCandidatesAtPos(canCo2, j);
-
-                    for (int i = 0; i < NumLines; i++)
-                    {
-                        if (DiagnosticReport[i,j] != oxygenCriteria)
-                            canOxygen.Remove(i);
-
-                        if (DiagnosticReport[i,j] != co2Criteria)
-                            canCo2.Remove(i);
-                    }
-
-                    if (canOxygen.Count == 1)
-                        oxygenRating = Common.Common.IntArrayOfUnsignedBinaryToInt(GetRow(canOxygen.First()));
-
-                    if (canCo2.Count == 1)
-                        co2Rating= Common.Common.IntArrayOfUnsignedBinaryToInt(GetRow(canCo2.First()));
-
-                    if (oxygenRating > 0 && co2Rating > 0)
-                    {
-                        break;
-                    }
-                }
+                var oxygenRating = CalculateRatingUsingBitCriteria(mostCommon: true);
+                var co2Rating = CalculateRatingUsingBitCriteria(mostCommon: false);
 
                 return oxygenRating * co2Rating;
             }
@@ -109,6 +73,7 @@ namespace AdventOfCode
                     }
                 }
 
+                // Find most common
                 var mostCommon = new int[NumBits];
                 for (int i = 0; i < NumBits; i++)
                 {
@@ -117,6 +82,37 @@ namespace AdventOfCode
                 }
 
                 return mostCommon;
+            }
+
+            private int CalculateRatingUsingBitCriteria(bool mostCommon = true)
+            {
+                var candidates = new HashSet<int>(NumLines);
+                for (int i = 0; i < NumLines; i++)
+                {
+                    candidates.Add(i);
+                }
+                var remove = new HashSet<int>();
+
+                // Calculate ratings
+                for (int j = 0; j < NumBits; j++)
+                {
+                    var criteria = mostCommon ?
+                        CalculateMostCommonValueForCandidatesAtPos(candidates, j) :
+                        1 - CalculateMostCommonValueForCandidatesAtPos(candidates, j);
+
+                    for (int i = 0; i < NumLines; i++)
+                    {
+                        if (candidates.Contains(i) && DiagnosticReport[i,j] != criteria)
+                            candidates.Remove(i);
+                    }
+
+                    if (candidates.Count == 1)
+                    {
+                        return Common.Common.IntArrayOfUnsignedBinaryToInt(GetRow(candidates.First()));
+                    }
+                }
+
+                throw new Exception("Could not find exactly 1 candidate that matched criteria");
             }
 
             private int CalculateMostCommonValueForCandidatesAtPos(HashSet<int> candidates, int pos)

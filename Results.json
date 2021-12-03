@@ -18,9 +18,9 @@
     {
       "Day": "03",
       "Puzzle1_TestTime": "<1ms",
-      "Puzzle2_TestTime": "1ms",
-      "Puzzle1_BenchmarkTime": "127μs",
-      "Puzzle2_BenchmarkTime": "336μs"
+      "Puzzle2_TestTime": "<1ms",
+      "Puzzle1_BenchmarkTime": "125μs",
+      "Puzzle2_BenchmarkTime": "285μs"
     },
     {
       "Day": "04",
