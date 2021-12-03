@@ -155,6 +155,23 @@ namespace AdventOfCode.Common
             return result;
         }
 
+        public static int IntArrayOfUnsignedBinaryToInt(int[] a)
+        {
+            if (a.Length > 16)
+            {
+                throw new ArgumentException("Only supports up to 16 bits");
+            }
+
+            UInt16 val = 0;
+            for (int i = 0; i < a.Length; i++)
+            {
+                if (a[a.Length - 1 - i] == 1)
+                    val |= (UInt16)(1 << i);
+            }
+
+            return val;
+        }
+
         public static IEnumerable<IEnumerable<T>> GetPermutations<T>(IEnumerable<T> list, int length)
         {
             // Copy from: https://stackoverflow.com/a/10630026
