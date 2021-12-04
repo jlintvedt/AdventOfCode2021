@@ -50,6 +50,39 @@ namespace AdventOfCode
                 throw new Exception("Couldn't find any winning boards");
             }
 
+            public int FindLastWinningNumber()
+            {
+                var completedBoards = new Queue<BingoBoard>();
+
+                while (NumberDraws.Count > 0)
+                {
+                    var number = NumberDraws.Dequeue();
+
+                    foreach (var board in BingoBoards)
+                    {
+                        if (board.MarkNumber(number))
+                        {
+                            completedBoards.Enqueue(board);
+                        }
+                    }
+
+                    // Remove completed boards, if there are still un-won boards
+                    foreach (var complete in completedBoards)
+                    {
+                        if (BingoBoards.Count == 1)
+                        {
+                            return number * complete.FindSumOfUnmarkedNumbers();
+                        }
+
+                        BingoBoards.Remove(complete);
+                    }
+
+                    completedBoards.Clear();
+                }
+
+                throw new Exception("Couldn't find only the last winning board");
+            }
+
             public class BingoBoard
             {
                 private Dictionary<int, (int y, int x)> Numbers;
@@ -129,7 +162,9 @@ namespace AdventOfCode
         // == == == == == Puzzle 2 == == == == ==
         public static string Puzzle2(string input)
         {
-            return "Puzzle2";
+            var bs = new BingoSubsystem(input);
+
+            return bs.FindLastWinningNumber().ToString();
         }
     }
 }
