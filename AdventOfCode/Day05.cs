@@ -13,6 +13,7 @@ namespace AdventOfCode
             private static int Height = 1000;
             private readonly int[,] Vents;
             private bool MapVerticalVents;
+            public int NumDangeroudAreas { get; private set; }
 
             public HydrothermalVents(string input, bool mapVertical = false)
             {
@@ -51,9 +52,10 @@ namespace AdventOfCode
 
                     for (int y = min; y <= max; y++)
                     {
-                        Vents[start.x, y]++;
+                        if (++Vents[start.x, y] == 2)
+                            NumDangeroudAreas++;
                     }
-                } 
+                }
                 else if (start.y == stop.y) // Horizontal
                 {
                     var min = start.x < stop.x ? start.x : stop.x;
@@ -61,7 +63,8 @@ namespace AdventOfCode
 
                     for (int x = min; x <= max; x++)
                     {
-                        Vents[x, start.y]++;
+                        if (++Vents[x, start.y] == 2)
+                            NumDangeroudAreas++;
                     }
                 }
                 else if (MapVerticalVents) // Diagonal
@@ -74,7 +77,8 @@ namespace AdventOfCode
                         var y = min.y;
                         for (var x = min.x; x <=max.x; x++)
                         {
-                            Vents[x, y++]++;
+                            if (++Vents[x, y++] == 2)
+                                NumDangeroudAreas++;
                         }
                     }
                     else // direction:/
@@ -85,26 +89,11 @@ namespace AdventOfCode
                         var y = min.y;
                         for (var x = min.x; x <= max.x; x++)
                         {
-                            Vents[x, y--]++;
+                            if (++Vents[x, y--] == 2)
+                                NumDangeroudAreas++;
                         }
                     }
                 }
-            }
-
-            public int CountDangerousAreas(int threshold = 2)
-            {
-                var numDangerous = 0;
-
-                for (int x = 0; x < Width; x++)
-                {
-                    for (int y = 0; y < Height; y++)
-                    {
-                        if (Vents[x, y] >= threshold)
-                            numDangerous++;
-                    }
-                }
-
-                return numDangerous;
             }
         }
 
@@ -113,7 +102,7 @@ namespace AdventOfCode
         {
             var hv = new HydrothermalVents(input);
 
-            return hv.CountDangerousAreas().ToString();
+            return hv.NumDangeroudAreas.ToString();
         }
 
         // == == == == == Puzzle 2 == == == == ==
@@ -121,7 +110,7 @@ namespace AdventOfCode
         {
             var aa = new HydrothermalVents(input, mapVertical: true);
 
-            return aa.CountDangerousAreas().ToString();
+            return aa.NumDangeroudAreas.ToString();
         }
     }
 }
