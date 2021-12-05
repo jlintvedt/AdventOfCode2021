@@ -12,9 +12,12 @@ namespace AdventOfCode
             private static int Width = 1000;
             private static int Height = 1000;
             private readonly int[,] Vents;
+            private bool MapVerticalVents;
 
-            public HydrothermalVents(string input)
+            public HydrothermalVents(string input, bool mapVertical = false)
             {
+                MapVerticalVents = mapVertical;
+
                 Vents = new int[Width, Height];
 
                 foreach (var line in input.Split(Environment.NewLine))
@@ -61,9 +64,30 @@ namespace AdventOfCode
                         Vents[x, start.y]++;
                     }
                 }
-                else // Diagonal
+                else if (MapVerticalVents) // Diagonal
                 {
-                    // Skip
+                    if (((start.x < stop.x) && (start.y < stop.y)) || ((start.x > stop.x) && (start.y > stop.y))) // direction:\
+                    {
+                        var min = (start.x < stop.x) ? start : stop;
+                        var max = (start.x > stop.x) ? start : stop;
+
+                        var y = min.y;
+                        for (var x = min.x; x <=max.x; x++)
+                        {
+                            Vents[x, y++]++;
+                        }
+                    }
+                    else // direction:/
+                    {
+                        var min = (start.x < stop.x) ? start : stop;
+                        var max = (start.x > stop.x) ? start : stop;
+
+                        var y = min.y;
+                        for (var x = min.x; x <= max.x; x++)
+                        {
+                            Vents[x, y--]++;
+                        }
+                    }
                 }
             }
 
@@ -95,9 +119,9 @@ namespace AdventOfCode
         // == == == == == Puzzle 2 == == == == ==
         public static string Puzzle2(string input)
         {
-            var aa = new HydrothermalVents(input);
+            var aa = new HydrothermalVents(input, mapVertical: true);
 
-            return "Puzzle2";
+            return aa.CountDangerousAreas().ToString();
         }
     }
 }
