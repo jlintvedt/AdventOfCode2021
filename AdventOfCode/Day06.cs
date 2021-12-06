@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-
-namespace AdventOfCode
+﻿namespace AdventOfCode
 {
     /// <summary>
     /// https://adventofcode.com/2021/day/06
@@ -10,62 +7,48 @@ namespace AdventOfCode
     {
         public class LanterfishSchool
         {
-            private List<Lanternfhish> lanternfhish;
+            private long[] DaysToSpawn;
 
             public LanterfishSchool(string input)
             {
-                lanternfhish = new List<Lanternfhish>();
+                DaysToSpawn = new long[9];
 
                 foreach (string days in input.Split(','))
                 {
-                    lanternfhish.Add(new Lanternfhish(int.Parse(days)));
+                    DaysToSpawn[int.Parse(days)]++;
                 }
             }
 
-            public int CalculatePopulation(int days = 80)
+            public long CalculatePopulation(int days = 80)
             {
-                for (int day = 0; day < days; day++)
+                var nextDay = new long[9];
+                
+                for (int day = 0; day <= days; day++)
                 {
-                    var numNew = 0;
-
-                    foreach (var fish in lanternfhish)
+                    // Advance existing fish
+                    for (int i = 0; i < 8; i++)
                     {
-                        fish.AdvanceDay(out bool newSpawn);
-
-                        if (newSpawn)
-                            numNew++;
+                        nextDay[i] = DaysToSpawn[i + 1];
                     }
 
-                    for (int i = 0; i < numNew; i++)
-                    {
-                        lanternfhish.Add(new Lanternfhish());
-                    }
+                    // Ready fish spawn
+                    nextDay[8] = DaysToSpawn[0];
+                    nextDay[6] += DaysToSpawn[0];
+
+                    // Swap arrays
+                    var tmp = DaysToSpawn;
+                    DaysToSpawn = nextDay;
+                    nextDay = tmp;
                 }
 
-                return lanternfhish.Count;
-            }
-
-            public class Lanternfhish
-            {
-                public int DaysToSpawning;
-
-                public Lanternfhish(int days = 8)
+                // Calculate total
+                long total = 0;
+                for (int i = 0; i < 8; i++)
                 {
-                    this.DaysToSpawning = days;
+                    total += DaysToSpawn[i];
                 }
 
-                public void AdvanceDay(out bool newSpawn)
-                {
-                    if (DaysToSpawning-- <= 0)
-                    {
-                        DaysToSpawning = 6;
-                        newSpawn = true;
-                    }
-                    else
-                    {
-                        newSpawn = false;
-                    }
-                }
+                return total;
             }
         }
 
@@ -82,7 +65,7 @@ namespace AdventOfCode
         {
             var ls = new LanterfishSchool(input);
 
-            return "Puzzle2";
+            return ls.CalculatePopulation(256).ToString();
         }
     }
 }
