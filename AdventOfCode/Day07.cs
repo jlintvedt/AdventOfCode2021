@@ -11,15 +11,32 @@ namespace AdventOfCode
         public class CrabAlligner
         {
             private int[] CrabPositions;
+            private int MaxPos;
+            private int[] CostToMove;
+            private bool UseScalingFuelCost;
 
-            public CrabAlligner(string input)
+            public CrabAlligner(string input, bool scalingFuelCost = false)
             {
                 CrabPositions = Common.Common.ParseStringToIntArray(input, ",");
+                MaxPos = CrabPositions.Max();
+
+                UseScalingFuelCost = scalingFuelCost;
+                if (UseScalingFuelCost)
+                {
+                    CostToMove = new int[MaxPos+1];
+                    var cost = 0;
+                    var increase = 0;
+                    for (int i = 0; i < MaxPos+1; i++)
+                    {
+                        cost += increase++;
+                        CostToMove[i] = cost;
+                    }
+                }
             }
 
             public long CalculateAllignmentCost()
             {
-                var bestPos = CrabPositions.Max()/2;
+                var bestPos = MaxPos/2;
                 var bestCost = CalculateCostForPos(bestPos);
                 var range = bestPos / 2;
 
@@ -52,13 +69,20 @@ namespace AdventOfCode
                 return bestCost;
             }
 
-            public long CalculateCostForPos(int pos)
+            private long CalculateCostForPos(int pos)
             {
                 long cost = 0;
 
                 foreach (var crab in CrabPositions)
                 {
-                    cost += Math.Abs(pos - crab);
+                    if (!UseScalingFuelCost)
+                    {
+                        cost += Math.Abs(pos - crab);
+                    }
+                    else
+                    {
+                        cost += CostToMove[Math.Abs(pos - crab)];
+                    }
                 }
 
                 return cost;
@@ -76,9 +100,9 @@ namespace AdventOfCode
         // == == == == == Puzzle 2 == == == == ==
         public static string Puzzle2(string input)
         {
-            var ca = new CrabAlligner(input);
+            var ca = new CrabAlligner(input, scalingFuelCost: true);
 
-            return "Puzzle2";
+            return ca.CalculateAllignmentCost().ToString();
         }
     }
 }
