@@ -10,10 +10,10 @@ namespace AdventOfCode
     {
         public class CrabAlligner
         {
-            private int[] CrabPositions;
-            private int MaxPos;
-            private int[] CostToMove;
-            private bool UseScalingFuelCost;
+            private readonly int[] CrabPositions;
+            private readonly int MaxPos;
+            private readonly int[] CostToMove;
+            private readonly bool UseScalingFuelCost;
 
             public CrabAlligner(string input, bool scalingFuelCost = false)
             {
