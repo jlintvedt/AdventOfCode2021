@@ -12,11 +12,14 @@ namespace AdventOfCode
         public class SyntaxScoring
         {
             private List<string> lines;
-            private Dictionary<char, char> chunkPairs = new Dictionary<char, char>() {
+            private static readonly Dictionary<char, char> chunkPairs = new Dictionary<char, char>() {
                 { '(', ')' }, { '[', ']' }, { '{', '}' }, { '<', '>' }
             };
-            private Dictionary<char, int> symbolValue = new Dictionary<char, int>() {
+            private static readonly Dictionary<char, int> illegalValue = new Dictionary<char, int>() {
                 { ')', 3 }, { ']', 57 }, { '}', 1197 }, { '>', 25137 }
+            };
+            private static readonly Dictionary<char, int> autocompleteValue = new Dictionary<char, int>() {
+                { '(', 1 }, { '[', 2 }, { '{', 3 }, { '<', 4 }
             };
 
             public SyntaxScoring(string input)
@@ -24,25 +27,41 @@ namespace AdventOfCode
                 lines = input.Split(Environment.NewLine).ToList();
             }
 
-            public int CalculateSyntaxErrorScore()
+            public long CalculateSyntaxErrorScore()
             {
-                var score = 0;
+                long score = 0;
 
                 foreach (var line in lines)
                 {
-                    if (!CheckIfLineIsValid(line, out int errorScore))
-                    {
-                        score += errorScore;
-                    }
+                    var ls = CheckLineScore(line, out bool isIllegal);
+                    if (isIllegal)
+                        score += ls;
                 }
 
                 return score;
             }
 
-            private bool CheckIfLineIsValid(string line, out int errorScore)
+            public long CalculateAutocompleteScore()
+            {
+                var scores = new List<long>();
+
+                foreach (var line in lines)
+                {
+                    var ls = CheckLineScore(line, out bool isIllegal);
+                    if (!isIllegal)
+                        scores.Add(ls);
+                }
+
+                scores.Sort();
+                return scores[(scores.Count / 2)];
+            }
+
+            private long CheckLineScore(string line, out bool isCorrupt)
             {
                 var open = new Stack<char>();
+                isCorrupt = false;
 
+                // Check if line is corrupt
                 foreach (var symbol in line)
                 {
                     // Open
@@ -55,13 +74,20 @@ namespace AdventOfCode
                     var lastOpen = open.Pop();
                     if (!(chunkPairs[lastOpen] == symbol))
                     {
-                        errorScore = symbolValue[symbol];
-                        return false;
+                        isCorrupt = true;
+                        return illegalValue[symbol];
                     }
                 }
 
-                errorScore = 0;
-                return true;
+                // Line is not corrupt, calculate auto-complete score
+                long score = 0;
+                foreach (var symbol in open)
+                {
+                    score *= 5;
+                    score += autocompleteValue[symbol];
+                }
+
+                return score;
             }
         }
 
@@ -76,7 +102,9 @@ namespace AdventOfCode
         // == == == == == Puzzle 2 == == == == ==
         public static string Puzzle2(string input)
         {
-            return "Puzzle2";
+            var ss = new SyntaxScoring(input);
+
+            return ss.CalculateAutocompleteScore().ToString();
         }
     }
 }
