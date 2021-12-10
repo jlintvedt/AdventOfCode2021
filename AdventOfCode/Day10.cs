@@ -11,7 +11,7 @@ namespace AdventOfCode
     {
         public class SyntaxScoring
         {
-            private List<string> lines;
+            private readonly List<string> lines;
             private static readonly Dictionary<char, char> chunkPairs = new Dictionary<char, char>() {
                 { '(', ')' }, { '[', ']' }, { '{', '}' }, { '<', '>' }
             };
