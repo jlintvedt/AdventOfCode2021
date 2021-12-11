@@ -38,7 +38,7 @@ namespace AdventOfCode
                 }
             }
 
-            public int FindNumFlashes(int steps = 100)
+            public int FindNumFlashes(int steps = 100, bool onlySyncronizedFlash = false)
             {
                 var numFlashes = 0;
 
@@ -69,6 +69,10 @@ namespace AdventOfCode
                     {
                         energyLevel[y, x] = 0;
                     }
+
+                    if (onlySyncronizedFlash && hasFlashed.Count == width * height)
+                        return ++step;
+
                     hasFlashed.Clear();
                 }
 
@@ -102,7 +106,9 @@ namespace AdventOfCode
         // == == == == == Puzzle 2 == == == == ==
         public static string Puzzle2(string input)
         {
-            return "Puzzle2";
+            var doc = new DumboOctopus(input);
+
+            return doc.FindNumFlashes(steps: 1000, onlySyncronizedFlash: true).ToString();
         }
     }
 }
