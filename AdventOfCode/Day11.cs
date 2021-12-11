@@ -11,9 +11,9 @@ namespace AdventOfCode
     {
         public class DumboOctopus
         {
-            private int[,] energyLevel;
-            private int height = 10;
-            private int width = 10;
+            private readonly int[,] energyLevel;
+            private static readonly int height = 10;
+            private static readonly int width = 10;
             private readonly HashSet<(int y, int x)> isFlashing;
             private readonly HashSet<(int y, int x)> hasFlashed;
             private static readonly List<(int y, int x)> neighbourOffset = new List<(int y, int x)>(){
@@ -38,45 +38,67 @@ namespace AdventOfCode
                 }
             }
 
-            public int FindNumFlashes(int steps = 100, bool onlySyncronizedFlash = false)
+            public int FindNumFlashes(int steps = 100)
             {
                 var numFlashes = 0;
 
                 for (int step = 0; step < steps; step++)
                 {
-                    // Increase all by one
-                    for (int y = 0; y < height; y++)
-                    {
-                        for (int x = 0; x < width; x++)
-                        {
-                            if (++energyLevel[y, x] > 9)
-                                isFlashing.Add((y, x));
-                        }
-                    }
-
-                    // Flash all with maximum energy
-                    while (isFlashing.Count > 0)
-                    {
-                        var octo = isFlashing.First();
-                        FlashOctopus(octo);
-                        isFlashing.Remove(octo);
-                        hasFlashed.Add(octo);
-                        numFlashes++;
-                    }
-
-                    // Reset energy of all flashed octopus
-                    foreach (var (y, x) in hasFlashed)
-                    {
-                        energyLevel[y, x] = 0;
-                    }
-
-                    if (onlySyncronizedFlash && hasFlashed.Count == width * height)
-                        return ++step;
-
-                    hasFlashed.Clear();
+                    IncreaseEnergyOfAll();
+                    numFlashes += FlashAllWithMaximumEnergy();
+                    ResetAllFlashed();
                 }
 
                 return numFlashes;
+            }
+
+            public int FindFirstSynchronizedFlash()
+            {
+                for (int step = 1; step < 1000; step++)
+                {
+                    IncreaseEnergyOfAll();
+                    FlashAllWithMaximumEnergy();
+                    if (hasFlashed.Count == width * height)
+                        return step;
+                    ResetAllFlashed();
+                }
+
+                throw new Exception("Couldn't find any synchronized flash within the first 1000 steps");
+            }
+
+            private void IncreaseEnergyOfAll()
+            {
+                for (int y = 0; y < height; y++)
+                {
+                    for (int x = 0; x < width; x++)
+                    {
+                        if (++energyLevel[y, x] > 9)
+                            isFlashing.Add((y, x));
+                    }
+                }
+            }
+
+            private int FlashAllWithMaximumEnergy()
+            {
+                var numFlashes = 0;
+                while (isFlashing.Count > 0)
+                {
+                    var octo = isFlashing.First();
+                    FlashOctopus(octo);
+                    isFlashing.Remove(octo);
+                    hasFlashed.Add(octo);
+                    numFlashes++;
+                }
+
+                return numFlashes;
+            }
+
+            private void ResetAllFlashed()
+            {
+                foreach (var (y, x) in hasFlashed)
+                    energyLevel[y, x] = 0;
+
+                hasFlashed.Clear();
             }
 
             private void FlashOctopus((int y, int x) octo)
@@ -108,7 +130,7 @@ namespace AdventOfCode
         {
             var doc = new DumboOctopus(input);
 
-            return doc.FindNumFlashes(steps: 1000, onlySyncronizedFlash: true).ToString();
+            return doc.FindFirstSynchronizedFlash().ToString();
         }
     }
 }
