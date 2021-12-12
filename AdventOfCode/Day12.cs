@@ -11,7 +11,7 @@ namespace AdventOfCode
         public class PassagePathing
         {
             public readonly Dictionary<string, Cave> Caves;
-            private readonly List<string> paths = new List<string>();
+            private int numPaths = 0;
             private readonly Stack<string> visited = new Stack<string>();
             private bool allowDoubleVisitToOneSmallCave;
 
@@ -34,7 +34,7 @@ namespace AdventOfCode
             {
                 allowDoubleVisitToOneSmallCave = allowDoubleVisit;
                 FindPathsRec(Caves["start"], false);
-                return paths.Count;
+                return numPaths;
             }
 
             private void FindPathsRec(Cave current, bool doubleVisitUsed)
@@ -43,7 +43,7 @@ namespace AdventOfCode
 
                 if (current.Name == "end")
                 {
-                    paths.Add(string.Join(',', visited));
+                    numPaths++;
                 }
                 else
                 {
