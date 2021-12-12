@@ -11,9 +11,9 @@ namespace AdventOfCode
         public class PassagePathing
         {
             public readonly Dictionary<string, Cave> Caves;
-            public readonly Cave Start;
-            public readonly Cave End;
-            private List<string> paths = new List<string>();
+            private readonly List<string> paths = new List<string>();
+            private readonly Stack<string> visited = new Stack<string>();
+            private bool allowDoubleVisitToOneSmallCave;
 
             public PassagePathing(string input)
             {
@@ -28,19 +28,16 @@ namespace AdventOfCode
                     from.Connections.Add(to);
                     to.Connections.Add(from);
                 }
-
-                Start = Caves["start"];
-                End= Caves["end"];
             }
 
-            public int FindNumPaths()
+            public int FindNumPaths(bool allowDoubleVisit = false)
             {
-                var visited = new Stack<string>();
-                FindPathsRec(Start, visited);
+                allowDoubleVisitToOneSmallCave = allowDoubleVisit;
+                FindPathsRec(Caves["start"], false);
                 return paths.Count;
             }
 
-            private void FindPathsRec(Cave current, Stack<string> visited)
+            private void FindPathsRec(Cave current, bool doubleVisitUsed)
             {
                 visited.Push(current.Name);
 
@@ -53,9 +50,17 @@ namespace AdventOfCode
                     foreach (var cave in current.Connections)
                     {
                         if (!cave.LargeCave && visited.Contains(cave.Name))
-                            continue;
+                        {
+                            if (!allowDoubleVisitToOneSmallCave || doubleVisitUsed || cave.Name == "start")
+                                continue;
 
-                        FindPathsRec(cave, visited);
+                            // Allow visiting small cave twice, once
+                            FindPathsRec(cave, true);
+                        }
+                        else
+                        {
+                            FindPathsRec(cave, doubleVisitUsed);
+                        }
                     }
                 }
 
@@ -105,7 +110,9 @@ namespace AdventOfCode
         // == == == == == Puzzle 2 == == == == ==
         public static string Puzzle2(string input)
         {
-            return "Puzzle2";
+            var pp = new PassagePathing(input);
+
+            return pp.FindNumPaths(allowDoubleVisit: true).ToString();
         }
     }
 }
