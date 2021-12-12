@@ -80,10 +80,10 @@
     },
     {
       "Day": "12",
-      "Puzzle1_TestTime": "3ms",
-      "Puzzle2_TestTime": "81ms",
+      "Puzzle1_TestTime": "2ms",
+      "Puzzle2_TestTime": "76ms",
       "Puzzle1_BenchmarkTime": "1ms",
-      "Puzzle2_BenchmarkTime": "38ms"
+      "Puzzle2_BenchmarkTime": "36ms"
     },
     {
       "Day": "13",

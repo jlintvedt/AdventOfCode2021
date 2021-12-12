@@ -11,9 +11,9 @@ namespace AdventOfCode
         public class PassagePathing
         {
             public readonly Dictionary<string, Cave> Caves;
-            private int numPaths = 0;
             private readonly Stack<string> visited = new Stack<string>();
             private bool allowDoubleVisitToOneSmallCave;
+            private int numPaths = 0;
 
             public PassagePathing(string input)
             {
@@ -25,8 +25,8 @@ namespace AdventOfCode
                     var from = GetOrCreateCave(parts[0]);
                     var to = GetOrCreateCave(parts[1]);
 
-                    from.Connections.Add(to);
-                    to.Connections.Add(from);
+                    from.AddConnection(to);
+                    to.AddConnection(from);
                 }
             }
 
@@ -51,7 +51,7 @@ namespace AdventOfCode
                     {
                         if (!cave.LargeCave && visited.Contains(cave.Name))
                         {
-                            if (!allowDoubleVisitToOneSmallCave || doubleVisitUsed || cave.Name == "start")
+                            if (!allowDoubleVisitToOneSmallCave || doubleVisitUsed)
                                 continue;
 
                             // Allow visiting small cave twice, once
@@ -90,6 +90,13 @@ namespace AdventOfCode
 
                     if (char.IsUpper(name[0]))
                         LargeCave = true;
+                }
+
+                public void AddConnection(Cave con)
+                {
+                    // We can skip 'start' as it's never re-visited
+                    if (con.Name != "start")
+                        Connections.Add(con);
                 }
 
                 public override string ToString()
