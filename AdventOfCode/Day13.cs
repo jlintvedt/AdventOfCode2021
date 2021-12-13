@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Collections.Immutable;
 
 namespace AdventOfCode
 {
@@ -35,9 +34,18 @@ namespace AdventOfCode
                 }
             }
 
-            public int VisibleDotaAfterFirstFold()
+            public int VisibleDotsAfterFirstFold()
             {
                 FoldSheet(instructions[0].axis, instructions[0].pos);
+                return dots.Count;
+            }
+
+            public int VisibleDotsAfterAllFolds()
+            {
+                foreach (var (axis, pos) in instructions)
+                    FoldSheet(axis, pos);
+
+                //DrawGrid(); // Uncomment to draw grid for manual output reading
                 return dots.Count;
             }
 
@@ -50,17 +58,9 @@ namespace AdventOfCode
                     foreach (var dot in dots)
                     {
                         if (dot.y < pos)
-                        {
                             tmp.Add(dot);
-                        }
                         else
-                        {
                             tmp.Add((dot.x, (pos * 2) - dot.y));
-                        }
-                        if (dot.y > pos*2)
-                        {
-                            throw new Exception("don't");
-                        }
                     }
                 }
                 // Vertical fold
@@ -69,21 +69,31 @@ namespace AdventOfCode
                     foreach (var dot in dots)
                     {
                         if (dot.x < pos)
-                        {
                             tmp.Add(dot);
-                        }
                         else
-                        {
                             tmp.Add(((pos * 2) - dot.x, dot.y));
-                        }
-                        if (dot.x > pos * 2)
-                        {
-                            throw new Exception("don't");
-                        }
                     }
                 }
 
                 dots = tmp;
+            }
+
+            private void DrawGrid()
+            {
+                int rows = 6, cols = 40;
+                var grid = new char[rows][];
+                for (int i = 0; i < rows; i++)
+                    grid[i] = new string(' ', cols).ToCharArray();
+
+                // Mark dots
+                foreach (var dot in dots)
+                    grid[dot.y][dot.x] = '#';
+
+                var lines = new string[rows];
+                for (int i = 0; i < rows; i++)
+                    lines[i] = string.Join("", grid[i]);
+
+                grid = null; // Set breakpoint here and read line-output
             }
         }
 
@@ -93,13 +103,15 @@ namespace AdventOfCode
         {
             var to = new TransparentOrigami (input);
 
-            return to.VisibleDotaAfterFirstFold().ToString();
+            return to.VisibleDotsAfterFirstFold().ToString();
         }
 
         // == == == == == Puzzle 2 == == == == ==
         public static string Puzzle2(string input)
         {
-            return "Puzzle2";
+            var to = new TransparentOrigami(input);
+
+            return to.VisibleDotsAfterAllFolds().ToString();
         }
     }
 }
