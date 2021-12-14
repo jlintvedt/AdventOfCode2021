@@ -11,72 +11,74 @@ namespace AdventOfCode
     {
         public class ExtendedPolymerization
         {
-            private readonly List<char> elements;
-            private Dictionary<string, char> instructions = new Dictionary<string, char> ();
-            private readonly Dictionary<char, int> elementCount = new Dictionary<char, int>();
-            private Queue<(int pos, char elem)> newElements;
+            private Dictionary<(char first, char second), long> elementPairs = new Dictionary<(char first, char second), long>();
+            private readonly Dictionary<(char, char), char> instructions = new Dictionary<(char, char), char> ();
+            private readonly Dictionary<char, long> elementCount = new Dictionary<char, long>();
 
             public ExtendedPolymerization(string input)
             {
                 var parts = input.Split(new string[] { $"{Environment.NewLine}{Environment.NewLine}" }, StringSplitOptions.None);
-                elements = parts[0].ToList();
 
-                foreach (var e in elements)
+                var start = parts[0];
+                IncreaseElementCount(start[0], 1);
+                for (int i = 0; i < start.Length-1; i++)
                 {
-                    IncreaseElementCount(e, 1);
+                    var pair = (start[i], start[i + 1]);
+                    IncreaseCount(elementPairs, pair, 1);
+                    IncreaseElementCount(start[i+1], 1);
                 }
 
                 foreach (var inst in parts[1].Split(Environment.NewLine))
                 {
-                    instructions.Add($"{inst[0]}{inst[1]}", inst[6]);
+                    instructions.Add((inst[0], inst[1]), inst[6]);
                 }
             }
 
-            public int FindElmentDiff(int steps = 10)
+            public long FindElmentDiff(int steps = 10)
             {
-                // Execute steps
                 for (int s = 0; s < steps; s++)
                 {
                     ExecuteInstructions();
                 }
 
-                // Calculate diff
                 return elementCount.Values.Max() - elementCount.Values.Min();
             }
 
             private void ExecuteInstructions()
             {
-                newElements = new Queue<(int pos, char elem)>();
+                var newPairs = new Dictionary<(char, char), long> ();
 
-                for (int i = 0; i < elements.Count-1; i++)
+                foreach (var (pair, count) in elementPairs)
                 {
-                    var pair = $"{elements[i]}{elements[i + 1]}";
-
-                    if (instructions.TryGetValue(pair, out char insert))
+                    if (instructions.TryGetValue(pair, out char element))
                     {
-                        newElements.Enqueue((i+1+newElements.Count, insert));
+                        IncreaseCount(newPairs, (pair.first, element), count);
+                        IncreaseCount(newPairs, (element, pair.second), count);
+                        IncreaseElementCount(element, count);
+                    }
+                    else
+                    {
+                        newPairs.Add(pair, count);
                     }
                 }
 
-                while (newElements.Count > 0)
-                {
-                    var (pos, elem) = newElements.Dequeue();
-                    IncreaseElementCount(elem, 1);
-
-                    elements.Insert(pos, elem);
-                }
+                elementPairs = newPairs;
             }
 
-            private void IncreaseElementCount(char element, int value)
+            private void IncreaseElementCount(char element, long value)
             {
                 if (elementCount.ContainsKey(element))
-                {
                     elementCount[element] += value;
-                }
                 else
-                {
                     elementCount[element] = value;
-                }
+            }
+
+            private void IncreaseCount(Dictionary<(char, char), long> dict, (char, char) pair, long value)
+            {
+                if (dict.ContainsKey(pair))
+                    dict[pair] += value;
+                else
+                    dict[pair] = value;
             }
         }
 
@@ -85,13 +87,15 @@ namespace AdventOfCode
         {
             var ep = new ExtendedPolymerization(input);
 
-            return ep.FindElmentDiff().ToString();
+            return ep.FindElmentDiff(10).ToString();
         }
 
         // == == == == == Puzzle 2 == == == == ==
         public static string Puzzle2(string input)
         {
-            return "Puzzle2";
+            var ep = new ExtendedPolymerization(input);
+
+            return ep.FindElmentDiff(40).ToString();
         }
     }
 }
