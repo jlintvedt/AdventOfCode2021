@@ -1,8 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Runtime.CompilerServices;
-using System.Security;
-using System.Security.Cryptography.X509Certificates;
 
 namespace AdventOfCode
 {
@@ -20,21 +17,54 @@ namespace AdventOfCode
             private static readonly List<(int y, int x)> offsets = new List<(int y, int x)>() { (-1, 0), (1, 0), (0, -1), (0, 1) };
             private readonly PriorityQueue<(int y, int x), int> unvisited = new PriorityQueue<(int y, int x), int>();
 
-            public ChitonNavigation(string input)
+            public ChitonNavigation(string input, bool largeMap = false)
             {
                 var lines = input.Split(Environment.NewLine);
-                height = lines.Length;
-                width = lines[0].Length;
+                height = largeMap ? lines.Length * 5 : lines.Length;
+                width = largeMap ? lines[0].Length * 5 : lines[0].Length;
 
                 riskLevel = new int[height, width];
                 totalRisk = new int[height, width];
                 visited = new bool[height, width];
 
-                for (int y = 0; y < height; y++)
+                for (int y = 0; y < lines.Length; y++)
                 {
-                    for (int x = 0; x < width; x++)
+                    for (int x = 0; x < lines[0].Length; x++)
                     {
                         riskLevel[y, x] = (int)Char.GetNumericValue(lines[y][x]);
+                    }
+                }
+
+                if (largeMap)
+                    CreateLargeMap();
+            }
+
+            private void CreateLargeMap()
+            {
+                var h = height / 5;
+                var w = width / 5;
+
+                // Iterate over 'extra' maps
+                for (int offY = 0; offY < 5; offY++)
+                {
+                    for (int offX = 0; offX < 5; offX++)
+                    {
+                        if (offY == 0 && offX == 0)
+                            continue; // Skip re-calculating original map
+
+                        var origin = (y: offY * h, x: offX * w);
+                        var offset = offY + offX;
+
+                        // Iterate over positions in 'extra' map
+                        for (int y = 0; y < h; y++)
+                        {
+                            for (int x = 0; x < w; x++)
+                            {
+                                var risk = (riskLevel[y, x] + offset);
+                                risk = risk >= 10 ? risk % 10 + 1 : risk;
+                                riskLevel[origin.y + y, origin.x + x] = risk;
+                            }
+                        }
                     }
                 }
             }
@@ -99,7 +129,9 @@ namespace AdventOfCode
         // == == == == == Puzzle 2 == == == == ==
         public static string Puzzle2(string input)
         {
-            return "Puzzle2";
+            var cn = new ChitonNavigation(input, largeMap: true);
+
+            return cn.FindLeastRiskyPath().ToString(); ;
         }
     }
 }
