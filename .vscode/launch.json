@@ -9,7 +9,7 @@
             "type": "coreclr",
             "request": "launch",
             "preLaunchTask": "build all release",
-            "program": "${workspaceFolder}/AdventOfCodeBenchmark/bin/Release/netcoreapp3.1/AdventOfCodeBenchmark.dll",
+            "program": "${workspaceFolder}/AdventOfCodeBenchmark/bin/Release/net6.0/AdventOfCodeBenchmark.dll",
             "args": [],
             "cwd": "${workspaceFolder}/AdventOfCodeBenchmark",
             "console": "internalConsole",
