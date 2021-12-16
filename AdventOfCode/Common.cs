@@ -69,11 +69,17 @@ namespace AdventOfCode.Common
             { '8', new int[]{1,0,0,0} },
             { '9', new int[]{1,0,0,1} },
             { 'a', new int[]{1,0,1,0} },
+            { 'A', new int[]{1,0,1,0} },
             { 'b', new int[]{1,0,1,1} },
+            { 'B', new int[]{1,0,1,1} },
             { 'c', new int[]{1,1,0,0} },
+            { 'C', new int[]{1,1,0,0} },
             { 'd', new int[]{1,1,0,1} },
+            { 'D', new int[]{1,1,0,1} },
             { 'e', new int[]{1,1,1,0} },
-            { 'f', new int[]{1,1,1,1} }
+            { 'E', new int[]{1,1,1,0} },
+            { 'f', new int[]{1,1,1,1} },
+            { 'F', new int[]{1,1,1,1} }
         };
 
         public static int[] ConvertHexStringToBitArray(string hex)
