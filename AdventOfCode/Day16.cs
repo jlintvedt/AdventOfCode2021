@@ -1,6 +1,6 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace AdventOfCode
 {
@@ -25,15 +25,22 @@ namespace AdventOfCode
                 return rootPacket.GetVersionNumberWithSubPackets();
             }
 
+            public long GetFinalValue()
+            {
+                return rootPacket.Value;
+            }
+
             public class Packet
             {
-                public int[] data;
+                public int[] data; // This can be removed, change to ref
                 public int Version;
                 public PacketType Type;
                 public List<Packet> Packets;
-                public int Value = 0;
+                private long value = 0;
                 private int readPos = 0;
                 public int Length;
+
+                public long Value { get { return CalculateValue(); } }
 
                 public Packet(int[] input)
                 {
@@ -74,7 +81,7 @@ namespace AdventOfCode
                         for (int i = 0; i < 4; i++)
                         {
                             var index = readPos + (g*5) + i + 1;
-                            Value += data[index] << (numGroups - g - 1) * 4 + 3 - i;
+                            value += (long)data[index] << (numGroups - g - 1) * 4 + 3 - i;
                         }
                     }
 
@@ -85,7 +92,7 @@ namespace AdventOfCode
                 {
                     Packets = new List<Packet>();
 
-                    // Total length of packet
+                    // Total length of packages
                     if(data[readPos++] == 0)
                     {
                         var len = ReadAsInt(15);
@@ -113,7 +120,32 @@ namespace AdventOfCode
                     }
                 }
 
-                public int ReadAsInt(int length)
+                private long CalculateValue()
+                {
+                    switch (Type)
+                    {
+                        case PacketType.sum:
+                            return Packets.Select(p => p.Value).Sum();
+                        case PacketType.product:
+                            return Packets.Select(p => p.Value).Aggregate((long)1, (acc, val) => acc * val);
+                        case PacketType.minimum:
+                            return Packets.Select(p => p.Value).Min();
+                        case PacketType.maximum:
+                            return Packets.Select(p => p.Value).Max();
+                        case PacketType.literalValue:
+                            return value;
+                        case PacketType.greaterthan:
+                            return Packets[0].Value > Packets[1].Value ? 1 : 0;
+                        case PacketType.lessthan:
+                            return Packets[0].Value < Packets[1].Value ? 1 : 0;
+                        case PacketType.equal:
+                            return Packets[0].Value == Packets[1].Value ? 1 : 0;
+                        default:
+                            throw new Exception("Unknown Type");
+                    }
+                }
+
+                private int ReadAsInt(int length)
                 {
                     var value = 0;
                     for (int i = 0; i < length; i++)
@@ -127,17 +159,25 @@ namespace AdventOfCode
 
                     return value;
                 }
+
+                public override string ToString()
+                {
+                    if (Type == PacketType.literalValue)
+                        return $"Value: {value}";
+                    return $"{Type}[{Packets.Count}]: {Value}";
+                }
             }
 
             public enum PacketType
             {
-                a,
-                b,
-                c,
-                d,
+                sum,
+                product,
+                minimum,
+                maximum,
                 literalValue,
-                f,
-                g
+                greaterthan,
+                lessthan,
+                equal
             }
         }
         // == == == == == Puzzle 1 == == == == ==
@@ -151,7 +191,9 @@ namespace AdventOfCode
         // == == == == == Puzzle 2 == == == == ==
         public static string Puzzle2(string input)
         {
-            return "Puzzle2";
+            var pd = new PacketDecoder(input);
+
+            return pd.GetFinalValue().ToString();
         }
     }
 }

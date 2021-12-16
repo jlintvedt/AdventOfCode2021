@@ -74,11 +74,30 @@ namespace AdventOfCodeTests
         [TestMethod]
         public void Example_Puzzle2()
         {
-            // Act
-            var result = AdventOfCode.Day16.Puzzle2(input_example2);
+            // Act & Assert
+            var result = AdventOfCode.Day16.Puzzle2("C200B40A82");
+            Assert.AreEqual($"3", result);
 
-            // Assert
-            Assert.AreEqual($"Puzzle2", result);
+            result = AdventOfCode.Day16.Puzzle2("04005AC33890");
+            Assert.AreEqual($"54", result);
+
+            result = AdventOfCode.Day16.Puzzle2("880086C3E88112");
+            Assert.AreEqual($"7", result);
+
+            result = AdventOfCode.Day16.Puzzle2("CE00C43D881120");
+            Assert.AreEqual($"9", result);
+
+            result = AdventOfCode.Day16.Puzzle2("D8005AC2A8F0");
+            Assert.AreEqual($"1", result);
+
+            result = AdventOfCode.Day16.Puzzle2("F600BC2D8F");
+            Assert.AreEqual($"0", result);
+
+            result = AdventOfCode.Day16.Puzzle2("9C005AC2F8F0");
+            Assert.AreEqual($"0", result);
+
+            result = AdventOfCode.Day16.Puzzle2("9C0141080250320F1802104A08");
+            Assert.AreEqual($"1", result);
         }
 
         [TestMethod]
@@ -88,7 +107,7 @@ namespace AdventOfCodeTests
             var result = AdventOfCode.Day16.Puzzle2(input_puzzle);
 
             // Assert
-            Assert.AreEqual($"Puzzle2", result);
+            Assert.AreEqual($"1392637195518", result);
         }
     }
 }
