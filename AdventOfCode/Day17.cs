@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace AdventOfCode
 {
@@ -10,7 +11,6 @@ namespace AdventOfCode
         public class TrickShot
         {
             private (int min, int max) limitX, limitY;
-            private (int x, int y) position, velocity;
 
             public TrickShot(string input)
             {
@@ -55,6 +55,29 @@ namespace AdventOfCode
                 return maxY;
             }
 
+            public int FindNumInitialVelocitiy()
+            {
+                int minX = 0;
+                for (int tmp = 0; tmp < limitX.min;)
+                    tmp += ++minX;
+
+                // Open fire
+                var validStartVelocity = new HashSet<(int x, int y)>();
+                for (int x = minX; x <= limitX.max; x++)
+                {
+                    var consecutiveMiss = 0;
+                    for (int y = limitY.min; ; y++)
+                    {
+                        if (CheckForHit((x, y)))
+                            validStartVelocity.Add((x, y));
+                        else if ((++consecutiveMiss > 120))
+                            break;
+                    }
+                }
+
+                return validStartVelocity.Count;
+            }
+
             private bool CheckForHit((int x, int y) velocity)
             {
                 var pos = (x: 0, y: 0);
@@ -87,7 +110,9 @@ namespace AdventOfCode
         // == == == == == Puzzle 2 == == == == ==
         public static string Puzzle2(string input)
         {
-            return "Puzzle2";
+            var ts = new TrickShot(input);
+
+            return ts.FindNumInitialVelocitiy().ToString();
         }
     }
 }
