@@ -11,6 +11,7 @@ namespace AdventOfCode
         public class TrickShot
         {
             private (int min, int max) limitX, limitY;
+            private List<int> initialX, initialY;
 
             public TrickShot(string input)
             {
@@ -57,16 +58,15 @@ namespace AdventOfCode
 
             public int FindNumInitialVelocitiy()
             {
-                int minX = 0;
-                for (int tmp = 0; tmp < limitX.min;)
-                    tmp += ++minX;
-
+                // Idea: Can be further optimized by making dicts with numSteps for valid start positions and cross-referencing
+                FindValidInitialVelocities();
+                
                 // Open fire
                 var validStartVelocity = new HashSet<(int x, int y)>();
-                for (int x = minX; x <= limitX.max; x++)
+                foreach (var x in initialX)
                 {
                     var consecutiveMiss = 0;
-                    for (int y = limitY.min; ; y++)
+                    foreach (var y in initialY)
                     {
                         if (CheckForHit((x, y)))
                             validStartVelocity.Add((x, y));
@@ -97,6 +97,43 @@ namespace AdventOfCode
                 }
 
                 return false;
+            }
+
+            private void FindValidInitialVelocities()
+            {
+                initialX = new List<int>();
+                int minX = 0;
+                for (int tmp = 0; tmp < limitX.min;)
+                    tmp += ++minX;
+
+                for (int initX = minX; initX <= limitX.max; initX++)
+                {
+                    var velX = initX;
+                    for (int x = 0; x <= limitX.max && velX > 0; velX--)
+                    {
+                        x += velX;
+                        if (x >= limitX.min && x <= limitX.max)
+                        {
+                            initialX.Add(initX);
+                            break;
+                        }
+                    }
+                }
+
+                initialY = new List<int>();
+                for (int initY = limitY.min; initY < -limitY.min; initY++)
+                {
+                    var velY = initY;
+                    for (int y = 0; y >= limitY.min; velY--)
+                    {
+                        y += velY;
+                        if (y >= limitY.min && y <= limitY.max)
+                        {
+                            initialY.Add(initY);
+                            break;
+                        }
+                    }
+                }
             }
         }
         // == == == == == Puzzle 1 == == == == ==
