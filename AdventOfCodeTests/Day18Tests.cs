@@ -8,7 +8,6 @@ namespace AdventOfCodeTests
     {
         private string input_puzzle;
         private string input_example1;
-        private string input_example2;
 
         [TestInitialize]
         public void LoadInput()
@@ -16,7 +15,6 @@ namespace AdventOfCodeTests
             string day = "18";
             input_puzzle = Resources.Input.ResourceManager.GetObject($"D{day}_Puzzle").ToString();
             input_example1 = string.Format("[[[0,[5,8]],[[1,7],[9,6]]],[[4,[1,2]],[[1,4],2]]]{0}[[[5,[2,8]],4],[5,[[9,9],0]]]{0}[6,[[[6,2],[5,6]],[[7,6],[4,7]]]]{0}[[[6,[0,7]],[0,9]],[4,[9,[9,0]]]]{0}[[[7,[6,4]],[3,[1,3]]],[[[5,5],1],9]]{0}[[6,[[7,3],[3,2]]],[[[3,8],[5,7]],4]]{0}[[[[5,4],[7,7]],8],[[8,3],8]]{0}[[9,3],[[9,9],[6,[4,9]]]]{0}[[2,[[7,7],7]],[[5,8],[[9,3],[0,2]]]]{0}[[[[5,2],5],[8,[3,7]]],[[5,[7,5]],[4,4]]]", Environment.NewLine);
-            input_example2 = string.Format("example{0}2", Environment.NewLine);
         }
 
         [TestMethod]
@@ -49,10 +47,10 @@ namespace AdventOfCodeTests
         public void Example_Puzzle2()
         {
             // Act
-            var result = AdventOfCode.Day18.Puzzle2(input_example2);
+            var result = AdventOfCode.Day18.Puzzle2(input_example1);
 
-            // Assert
-            Assert.AreEqual($"Puzzle2", result);
+            // Assertt
+            Assert.AreEqual($"3993", result);
         }
 
         [TestMethod]
@@ -62,7 +60,7 @@ namespace AdventOfCodeTests
             var result = AdventOfCode.Day18.Puzzle2(input_puzzle);
 
             // Assert
-            Assert.AreEqual($"Puzzle2", result);
+            Assert.AreEqual($"4683", result);
         }
 
         // Number

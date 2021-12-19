@@ -32,6 +32,30 @@ namespace AdventOfCode
                 return sum.CalculateMagnitude();
             }
 
+            public int FindLargestMagnitudeWithTwoNumbers()
+            {
+                var numArray = numbers.ToArray();
+                var largest = 0;
+
+                for (var i = 0; i < numArray.Length; i++)
+                {
+                    for (int j = 0; j < numArray.Length; j++)
+                    {
+                        if (i == j)
+                            continue;
+
+                        var num = new Number(numArray[i].ToString());
+                        num.Reduce();
+                        num.AddNumber(new Number(numArray[j].ToString()));
+                        num.Reduce();
+                        
+                        largest = largest > num.CalculateMagnitude() ? largest : num.CalculateMagnitude();
+                    }
+                }
+
+                return largest;
+            }
+
             private void CalculateSum()
             {
                 sum = numbers.Dequeue();
@@ -253,7 +277,9 @@ namespace AdventOfCode
         // == == == == == Puzzle 2 == == == == ==
         public static string Puzzle2(string input)
         {
-            return "Puzzle2";
+            var sm = new SnailfishMath(input);
+
+            return sm.FindLargestMagnitudeWithTwoNumbers().ToString();
         }
     }
 }
