@@ -7,7 +7,7 @@ namespace AdventOfCodeBenchmark
     {
         string input;
 
-        [Params(100000)]
+        [Params(1000)]
         public int N;
 
         [GlobalSetup]
